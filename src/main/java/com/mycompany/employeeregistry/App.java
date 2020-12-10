@@ -25,8 +25,8 @@ public class App{
     
 
               private final String url = "jdbc:postgresql://localhost:5432/postgres";
-            private final String user = "postgres";
-    private final String password = "delasalle5882519";
+            private final String user = "user";
+    private final String password = "password";
 
     /**
      * Connect to the PostgreSQL database
