@@ -55,9 +55,9 @@ public class App{
   
                      
             System.out.println("Would you like to create, update or delete an employee record?");
-            String createOrDeleteEmployee = input.next();
+            String createDeleteUpdateEmployee = input.next();
                      
-        switch (createOrDeleteEmployee) {
+        switch (createDeleteUpdateEmployee) {
             case "create" :
             //Set variables to input
             System.out.println("Enter employee's first name");
@@ -83,7 +83,6 @@ public class App{
                 prepSt.setInt(4, salary);
                 
                 prepSt.executeUpdate();
-                System.out.println("Record created successfully");
                 
                 break;
                 
@@ -92,18 +91,17 @@ public class App{
             System.out.println("Please enter the name of the employee record");
             String delete = "DELETE FROM company WHERE name = ? ";
             prepSt = conn.prepareStatement(delete);
-            String deleteUser = input.next().toLowerCase();
+            String deleteUser = input.next();
             prepSt.setString(1, deleteUser);
 
             prepSt.executeUpdate();
-            System.out.println("Record deleted successfully");
             
             break;
             //Update employee information
             case ("update"):
                 System.out.println("Enter the name of the employee to be updated");
                 String selectedEmployee = input.next();
-                System.out.println("Enter the field you would like to update(age, address, salary");
+                System.out.println("Enter the field you would like to update(age, address, salary)");
                 String selectedField = input.next();
                 //Switch statement to select field to update
                 switch (selectedField){
@@ -137,10 +135,10 @@ public class App{
                         prepSt.executeUpdate();
                         break;
 
-                        default: System.out.println("Goodbye");
+                        default: System.out.println("Exiting");
                 }
                        
-                default: System.out.println("Goodbye");  
+                default: System.out.println("Exiting");  
         }
                 //Return company table data
          ResultSet rs = statement.executeQuery("SELECT * FROM COMPANY;");
