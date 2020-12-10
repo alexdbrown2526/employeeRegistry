@@ -14,6 +14,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.Scanner;
+import java.sql.PreparedStatement;
 
 /**
  *
@@ -22,9 +24,9 @@ import java.sql.ResultSet;
 public class App{
     
 
-    private final String url = "jdbc:postgresql://localhost:5432/postgres";
-    private final String user = "user";
-    private final String password = "password";
+              private final String url = "jdbc:postgresql://localhost:5432/postgres";
+            private final String user = "postgres";
+    private final String password = "delasalle5882519";
 
     /**
      * Connect to the PostgreSQL database
@@ -32,45 +34,131 @@ public class App{
      * @return a Connection object
      */
     public Connection connect() {
+        Scanner input = new Scanner(System.in);
         Connection conn = null;
+        PreparedStatement  prepSt = null;
+
         try {
             conn = DriverManager.getConnection(url, user, password);
             System.out.println("Connected to the PostgreSQL server successfully.");
-            
             Statement statement = conn.createStatement();
-         String sql = "CREATE TABLE IF NOT EXISTS COMPANY " +
-            "(ID INT PRIMARY KEY     NOT NULL," +
+
+            //Create company table
+            String create = "CREATE TABLE IF NOT EXISTS COMPANY " +
+            "(ID SERIAL PRIMARY KEY ," +
             " NAME           TEXT    NOT NULL, " +
             " AGE            INT     NOT NULL, " +
             " ADDRESS        TEXT, " +
             " SALARY         INT)";
+            
+            statement.executeUpdate(create);
+  
+                     
+            System.out.println("Would you like to create, update or delete an employee record?");
+            String createOrDeleteEmployee = input.next();
+                     
+        switch (createOrDeleteEmployee) {
+            case "create" :
+            //Set variables to input
+            System.out.println("Enter employee's first name");
+            String name = input.next();
+            
+            System.out.println("Enter employee's age");
+            int age = input.nextInt();
+            
+            System.out.println("Enter employee's location");
+            String address = input.next();
+            
+            System.out.println("Enter employee's salary");
+            int salary = input.nextInt();
+            
+            //Take input variables and insert values into company table
+            String insert = "INSERT INTO COMPANY (NAME, AGE, ADDRESS, SALARY) values (?, ?, ?, ?)";
          
-         String insert =  "INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY) "
-            + "VALUES (1, 'John', 30, 'Arizona', 120000.00 );" +
-                 "VALUES (2, 'Jane', 22, 'New York', 20000.00 ); " + 
-                 "VALUES (3, 'Alex', 43, 'Vermont', 50000.00 );" +
-                 "VALUES (4, 'Matt', 26, 'California', 2000000.00 );"; 
-         System.out.println("inserted successfully");
-         
+                prepSt = conn.prepareStatement(insert);
+                    
+                prepSt.setString(1, name);
+                prepSt.setInt(2, age);
+                prepSt.setString(3, address);
+                prepSt.setInt(4, salary);
+                
+                prepSt.executeUpdate();
+                System.out.println("Record created successfully");
+                
+                break;
+                
+            //Delete an employee by name
+            case ("delete"):
+            System.out.println("Please enter the name of the employee record");
+            String delete = "DELETE FROM company WHERE name = ? ";
+            prepSt = conn.prepareStatement(delete);
+            String deleteUser = input.next().toLowerCase();
+            prepSt.setString(1, deleteUser);
+
+            prepSt.executeUpdate();
+            System.out.println("Record deleted successfully");
+            
+            break;
+            //Update employee information
+            case ("update"):
+                System.out.println("Enter the name of the employee to be updated");
+                String selectedEmployee = input.next();
+                System.out.println("Enter the field you would like to update(age, address, salary");
+                String selectedField = input.next();
+                //Switch statement to select field to update
+                switch (selectedField){
+                    case ("age"):
+                        System.out.println("What would you like to change " + selectedEmployee + "'s age to?");
+                        int updatedAge = input.nextInt();
+                        String updateAgeSQL = "UPDATE company SET age =? WHERE name =?";
+                        prepSt = conn.prepareStatement(updateAgeSQL);
+                        prepSt.setInt(1, updatedAge);
+                        prepSt.setString(2, selectedEmployee);
+                        prepSt.executeUpdate();
+                        break;
+                    
+                    case("address"):
+                        System.out.println("What would you like to change " + selectedEmployee + "'s address to?");
+                        String updatedAddress = input.next();
+                        String updateAddressSQL = "UPDATE company SET address =? WHERE name =?";
+                        prepSt = conn.prepareStatement(updateAddressSQL);
+                        prepSt.setString(1, updatedAddress);
+                        prepSt.setString(2, selectedEmployee);
+                        prepSt.executeUpdate();
+                        break;
+                     
+                     case("salary"):
+                        System.out.println("What would you like to change " + selectedEmployee + "'s salary to?");
+                        int updatedSalary = input.nextInt();
+                        String updateSalarySQL = "UPDATE company SET salary =? WHERE name =?";
+                        prepSt = conn.prepareStatement(updateSalarySQL);
+                        prepSt.setInt(1, updatedSalary);
+                        prepSt.setString(2, selectedEmployee);
+                        prepSt.executeUpdate();
+                        break;
+
+                        default: System.out.println("Goodbye");
+                }
+                       
+                default: System.out.println("Goodbye");  
+        }
+                //Return company table data
          ResultSet rs = statement.executeQuery("SELECT * FROM COMPANY;");
             while(rs.next()) {
-               int id = rs.getInt("id");
-            String name = rs.getString("name");
-            int age = rs.getInt("age");
-            String address = rs.getString("address");
-            float  salary = rs.getFloat("salary");
+            int id = rs.getInt("ID");
+            String inputName = rs.getString("NAME");
+            int inputAge = rs.getInt("AGE");
+            String inputAddress = rs.getString("ADDRESS");
+            int  inputSalary = rs.getInt("SALARY");
             System.out.println( "ID = " + id );
-            System.out.println( "NAME = " + name );
-            System.out.println( "AGE = " + age );
-            System.out.println( "ADDRESS = " + address );
-            System.out.println( "SALARY = " + salary );
+            System.out.println( "NAME = " + inputName );
+            System.out.println( "AGE = " + inputAge );
+            System.out.println( "ADDRESS = " + inputAddress );
+            System.out.println( "SALARY = " + inputSalary );
             System.out.println(); 
             }
             rs.close();
-         
-         statement.executeUpdate(sql);
-         statement.executeUpdate(insert);
-         statement.close();
+          
          conn.close();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -78,11 +166,9 @@ public class App{
 
         return conn;
     }
-    
-    public static void main(String[] args) {
-        App app = new App();
-        app.connect();
-        
-       
+
+        public static void main(String[] args) {
+            App app = new App();
+            app.connect();  
     }
 }
