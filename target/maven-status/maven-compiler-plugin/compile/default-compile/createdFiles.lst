@@ -1,1 +1,5 @@
+com/mycompany/employeeregistry/Employee.class
 com/mycompany/employeeregistry/App.class
+com/mycompany/employeeregistry/TableManager.class
+com/mycompany/employeeregistry/ConnectionManager.class
+com/mycompany/employeeregistry/EmployeeInterface.class
