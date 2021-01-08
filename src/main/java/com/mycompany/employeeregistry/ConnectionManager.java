@@ -14,24 +14,35 @@ import java.sql.Connection;
 
 
 public class ConnectionManager {
-               private  final String url = "jdbc:postgresql://localhost:5432/postgres";
-            private  final String user = "user";
-    private  final String password = "password";
-                    Connection conn = null;
+  private  static final   ConnectionManager   INSTANCE = new ConnectionManager();
+  private  final String      url      = "jdbc:postgresql://localhost:5432/postgres";
+  private  final String      user     = "user";
+  private  final String      password = "password";
+  private        Connection  conn     = null;
 
-    public Connection connect() {
-        if (conn != null){
+    public Connection getConnection() {
+        if (conn != null) {
             return conn;
-        } else {
+        } 
+        else {
                 try {
                     conn = DriverManager.getConnection(url, user, password);
 
             System.out.println("Connected to the PostgreSQL server successfully.");
 
-}   catch (SQLException e) {
+        }   
+        catch (SQLException e) {
             System.out.println(e.getMessage());
-        } return conn;
-                } 
+        } 
+          
+          return conn;
+        } 
     }
+  
+    public static ConnectionManager getInstance() {
+      return(INSTANCE); 
+    }
+  
+  
  }
 
