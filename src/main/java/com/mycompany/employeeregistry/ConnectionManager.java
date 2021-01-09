@@ -15,18 +15,19 @@ import java.sql.Connection;
 
 public class ConnectionManager {
   private  static final   ConnectionManager   INSTANCE = new ConnectionManager();
-  private  final String      url      = "jdbc:postgresql://localhost:5432/postgres";
+  private  final String      url_s_c      = "jdbc:postgresql://localhost:5432/postgres";
   private  final String      user     = "user";
   private  final String      password = "password";
   private        Connection  conn     = null;
 
     public Connection getConnection() {
+      Connection connection_m = null;
         if (conn != null) {
             return conn;
         } 
         else {
                 try {
-                    conn = DriverManager.getConnection(url, user, password);
+                    connection_m = DriverManager.getConnection(url, user, password);
 
             System.out.println("Connected to the PostgreSQL server successfully.");
 
@@ -35,13 +36,19 @@ public class ConnectionManager {
             System.out.println(e.getMessage());
         } 
           
-          return conn;
+          return(connection_m);
         } 
     }
   
     public static ConnectionManager getInstance() {
       return(INSTANCE); 
     }
+  
+  public void returnConnection(Connection connection_p) {
+    if(connection_p != null) {
+      connection_p.close(); 
+    }
+  }
   
   
  }
